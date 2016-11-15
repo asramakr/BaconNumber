@@ -9,6 +9,7 @@
 
 #ifndef ACTORGRAPH_H
 #define ACTORGRAPH_H
+#include <cstdlib>
 
 #include <iostream>
 
@@ -16,16 +17,59 @@
 
 using namespace std;
 
+class MovieNode;
+
+class ActorNode {
+
+  public:
+
+    std::string name; // name of actor
+    vector<MovieNode*> listOfMovies; // list of movies actor has been in
+    bool visited = false; // check if actor node has been traversed
+
+
+    //Constructor
+    ActorNode(std::string actorName) : name(actorName){}
+
+    // Method that adds to list of movies actor has been in
+    void addMovie(MovieNode* movieToAdd);
+
+    //Destructor
+    //~ActorNode();
+};
+
+class MovieNode {
+
+  public:
+
+    std::string name; // name of movie
+    vector<ActorNode*> listOfActors; // list of actors in this movie
+    unsigned int yearReleased = 0; // year when movie was released
+  
+
+    // Constructor
+    MovieNode(std::string movieName, unsigned int year) : name(movieName),
+        yearReleased(year) {}
+
+    //Method to add actor to list of all total actors
+    void addActor(ActorNode* actorToAdd);
+
+    //Destructor
+    //~MovieNode();
+};
+
 class ActorGraph {
 protected:
   
     // Maybe add class data structure(s) here
+    vector<ActorNode*> totalActors; // list of all actors in graph
+    vector<MovieNode*> totalMovies; // list of all movies in graph
 
 public:
     ActorGraph(void);
 
     // Maybe add some more methods here
-  
+
     /** You can modify this method definition as you wish
      *
      * Load the graph from a tab-delimited file of actor->movie relationships.
@@ -40,4 +84,5 @@ public:
 };
 
 
-#endif // ACTORGRAPH_H
+#endif
+// ACTORGRAPH_H
