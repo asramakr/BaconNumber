@@ -13,6 +13,8 @@
 #include <string>
 #include <vector>
 #include "ActorGraph.h"
+#include <queue>
+#include <cstdlib>
 
 using namespace std;
 
@@ -34,8 +36,9 @@ bool ActorGraph::loadFromFile(const char* in_filename, bool use_weighted_edges) 
   
     // keep reading lines until the end of file is reached
     while (infile) {
+      cout << "LOOP" << endl;
         string s;
-    
+          
         // get the next line
         if (!getline( infile, s )) break;
 
@@ -67,14 +70,17 @@ bool ActorGraph::loadFromFile(const char* in_filename, bool use_weighted_edges) 
         int movie_year = stoi(record[2]);
         bool actorIn = false;
         bool movieIn = false;        
-    
+          
         // we have an actor/movie relationship, now what?
 
         // search through list of all actors if actor already exists
+        cout << "Line Count" << endl;
         for(int i=0; i<totalActors.size(); i++){
-
+                        
           // if actor is already in list
           if((totalActors[i]->name).compare(actor_name) == 0){
+            cout << "goes into found actor" << endl;
+            cout << "loaded Actor's name: " << totalActors[i] << endl;
 
             actorIn = true;
 
@@ -111,46 +117,49 @@ bool ActorGraph::loadFromFile(const char* in_filename, bool use_weighted_edges) 
             }
             break;
           }
+        }
 
-          // if actor doesn't exist
-          else if(!actorIn){
+        // if actor doesn't exist
+        if(!actorIn){
 
-            // create new ActorNode object to insert
-            ActorNode aNode(actor_name);
+                          
+          cout << "actor not found in load: " << actor_name << endl;
 
-            totalActors.push_back(&aNode); // add to list of all actors
+          // create new ActorNode object to insert
+          ActorNode aNode(actor_name);
 
-            // search list of all movies
-            for(int j=0; j<totalMovies.size(); j++){
+          totalActors.push_back(&aNode); // add to list of all actors
 
-              // if same movie and year found
-              if(totalMovies[j]->name.compare(movie_title) == 0 && 
-                  totalMovies[j]->yearReleased == movie_year){
+          // search list of all movies
+          for(int j=0; j<totalMovies.size(); j++){
 
-                movieIn = true;
+            // if same movie and year found
+            if(totalMovies[j]->name.compare(movie_title) == 0 && 
+                totalMovies[j]->yearReleased == movie_year){
 
-                aNode.addMovie(totalMovies[j]); // add under actor's name
+              movieIn = true;
 
-                totalMovies[j]->addActor(&aNode); // add actor under movie
+              aNode.addMovie(totalMovies[j]); // add under actor's name
 
-                break;
-              }
-            }
+              totalMovies[j]->addActor(&aNode); // add actor under movie
 
-            // if movie doesn't exist
-            if(!movieIn){
-
-              // create new MovieNode object to insert
-              MovieNode mNode(movie_title, movie_year);
-
-              totalMovies.push_back(&mNode); // add to list of all movies
-
-              aNode.addMovie(&mNode); // add movie under actor
-
-              mNode.addActor(&aNode); // add actor under movie
+              break;
             }
           }
-        }
+    
+          // if movie doesn't exist
+          if(!movieIn){
+
+            // create new MovieNode object to insert
+            MovieNode mNode(movie_title, movie_year);
+
+            totalMovies.push_back(&mNode); // add to list of all movies
+
+            aNode.addMovie(&mNode); // add movie under actor
+
+            mNode.addActor(&aNode); // add actor under movie
+          }
+        }        
     }
 
     if (!infile.eof()) {
@@ -160,4 +169,98 @@ bool ActorGraph::loadFromFile(const char* in_filename, bool use_weighted_edges) 
     infile.close();
 
     return true;
+}
+
+std::string ActorGraph::actorPath(std::string a1, std::string a2){
+  std::queue<string> pathway;
+  //stack<string> finalString;
+  std::queue<ActorNode*> actorsInPath;
+  vector<ActorNode*> adjActors;
+  vector<ActorNode*> adjActors2;
+  //vector<MovieNode*> adjMovies;
+  ActorNode* actorNode1;
+  ActorNode* actorNode2;
+  ActorNode* currentActor;
+  MovieNode* currentMovie;
+  std::string pathString;
+
+  for(int i=0; i<totalActors.size(); i++){
+    cout << totalActors.size() << endl;
+    if(totalActors[i]->name.compare(a1) == 0){
+      actorNode1 = totalActors[i];
+    }
+    if(totalActors[i]->name.compare(a2) == 0){
+      actorNode2 = totalActors[i];
+    }
+  }
+  if(actorNode1 == actorNode2){
+    return a1;
+  }
+
+  //pathway.push(a1);
+  //actorsInPath.push_back(actorNode1);
+  adjActors.push_back(actorNode1);
+  //currentActor = actorNode1;
+
+  for(int i=0; i<totalActors.size(); i++){
+    cout << "All Actors Names:" << totalActors[i]->name << endl;
+  }
+  cout << totalActors.size() << endl;
+
+  while (1) {
+
+    for(int i=0; i< (adjActors.size()); i++) {
+      currentActor = adjActors[i];
+      cout << "currentActor->name: " << currentActor->name << endl;
+      actorsInPath.push(currentActor);
+      for(int j=0; j<(currentActor->listOfMovies.size()); j++) {
+        currentMovie = currentActor->listOfMovies[j];
+        cout << "currentMovie->name: " << currentMovie->name << endl;
+        for(int k=0; k < currentMovie->listOfActors.size(); k++) {
+          currentMovie->listOfActors[k]->prevActor = currentActor;
+          if (currentMovie->listOfActors[k]->name.compare(a2)) {
+            currentActor->movieConnected = currentMovie;
+            currentMovie->listOfActors[k]->prevActor = currentActor;
+            actorsInPath.push(currentMovie->listOfActors[k]);
+            break;
+          }
+          else {
+            //currentMovie->listOfActors[k]->movieConnected = currentMovie;
+            adjActors2.push_back(currentMovie->listOfActors[k]);
+          }
+        }
+      }
+      actorsInPath.pop();
+    }
+
+    adjActors.clear();
+    
+    for(int i=0; i<adjActors2.size();i++) {
+      adjActors.push_back(adjActors2[i]);
+    }
+        
+  }
+
+  while (!actorsInPath.empty()) {
+    currentActor = actorsInPath.front();
+    pathway.push("(");
+    pathway.push(currentActor->name);
+    pathway.push(")");
+    if (currentActor->movieConnected) {
+      pathway.push("--[");
+      pathway.push(currentActor->movieConnected->name);
+      pathway.push("#@");
+      pathway.push(std::to_string(currentActor->movieConnected->yearReleased));
+      pathway.push("]-->");
+    }
+    actorsInPath.pop();
+  }
+
+  while (!pathway.empty()) {
+    pathString.append(pathway.front());
+    pathway.pop();
+  }
+  
+  return pathString;  
+
 }

@@ -19,7 +19,8 @@ int main(int argc, char ** argv){
   ActorGraph currentGraph;
   bool use_weighted_edges = false;
 
-  if(argc != 4){
+  if(argc != 5){
+    cout << "Error Occurred" << endl;
     return 1;
   }
   //std::filebuf fb1;
@@ -39,6 +40,8 @@ int main(int argc, char ** argv){
   }
 
   currentGraph.loadFromFile(argv[1], use_weighted_edges);
+
+  cout << currentGraph.actorPath("BACON, KEVIN (I)", "50CENT") <<endl;
 
 
 /*

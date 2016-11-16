@@ -26,13 +26,15 @@ class ActorNode {
     std::string name; // name of actor
     vector<MovieNode*> listOfMovies; // list of movies actor has been in
     bool visited = false; // check if actor node has been traversed
+    MovieNode* movieConnected;
+    ActorNode* prevActor;
 
 
     //Constructor
     ActorNode(std::string actorName) : name(actorName){}
 
     // Method that adds to list of movies actor has been in
-    void addMovie(MovieNode* movieToAdd);
+    void addMovie(MovieNode* movieToAdd);  
 
     //Destructor
     //~ActorNode();
@@ -80,6 +82,10 @@ public:
      * return true if file was loaded sucessfully, false otherwise
      */
     bool loadFromFile(const char* in_filename, bool use_weighted_edges);
+
+    std::string actorPath(std::string a1, std::string a2);
+
+
   
 };
 
