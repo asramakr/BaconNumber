@@ -41,7 +41,7 @@ int main(int argc, char ** argv){
 
   currentGraph.loadFromFile(argv[1], use_weighted_edges);
 
-  cout << currentGraph.actorPath("BACON, KEVIN (I)", "50CENT") <<endl;
+  cout << currentGraph.actorPath("WILSON, LUKE (I)", "WILSON, OWEN (I)") << endl;
 
 
 /*
