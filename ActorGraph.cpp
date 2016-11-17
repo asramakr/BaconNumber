@@ -14,10 +14,16 @@
 #include <vector>
 #include "ActorGraph.h"
 #include <queue>
+#include <stack>
+#include <deque>
 #include <cstdlib>
+#include <algorithm>
+#include "ActorNode.h"
+#include "MovieNode.h"
 
 using namespace std;
 
+/*
 void ActorNode::addMovie(MovieNode * movieToAdd) {
   listOfMovies.push_back(movieToAdd);
 }
@@ -25,6 +31,8 @@ void ActorNode::addMovie(MovieNode * movieToAdd) {
 void MovieNode::addActor(ActorNode* actorToAdd) {
   listOfActors.push_back(actorToAdd);
 }
+
+*/
 
 ActorGraph::ActorGraph(void) {}
 
@@ -36,7 +44,7 @@ bool ActorGraph::loadFromFile(const char* in_filename, bool use_weighted_edges) 
   
     // keep reading lines until the end of file is reached
     while (infile) {
-      cout << "LOOP" << endl;
+      //cout << "LOOP" << endl;
         string s;
           
         // get the next line
@@ -52,12 +60,12 @@ bool ActorGraph::loadFromFile(const char* in_filename, bool use_weighted_edges) 
         vector <string> record;
 
         while (ss) {
-          cout << "goes into inner loop" << endl;
+          //cout << "goes into inner loop" << endl;
             string next;
       
             // get the next string before hitting a tab character and put it in 'next'
             if (!getline( ss, next, '\t' )) {
-              cout << "breaks at tab" << endl;
+              //cout << "breaks at tab" << endl;
               break;
             }
 
@@ -66,7 +74,7 @@ bool ActorGraph::loadFromFile(const char* in_filename, bool use_weighted_edges) 
     
         if (record.size() != 3) {
             // we should have exactly 3 columns
-            cout << "doesn't have 3 columns" << endl;
+            //cout << "doesn't have 3 columns" << endl;
             continue;
         }
 
@@ -74,9 +82,9 @@ bool ActorGraph::loadFromFile(const char* in_filename, bool use_weighted_edges) 
         string movie_title(record[1]);
         int movie_year = stoi(record[2]);
 
-        cout << "readIn actor_name: " << actor_name << endl;
-        cout << "readIn movie_title: " << movie_title << endl;
-        cout << "readIn movie_year: " << movie_year << endl;
+        //cout << "readIn actor_name: " << actor_name << endl;
+        //cout << "readIn movie_title: " << movie_title << endl;
+        //cout << "readIn movie_year: " << movie_year << endl;
         
         bool actorIn = false;
         bool movieIn = false;        
@@ -84,13 +92,13 @@ bool ActorGraph::loadFromFile(const char* in_filename, bool use_weighted_edges) 
         // we have an actor/movie relationship, now what?
 
         // search through list of all actors if actor already exists
-        cout << "Line Count" << endl;
+        //cout << "Line Count" << endl;
         for(int i=0; i<totalActors.size(); i++){
                         
           // if actor is already in list
           if((totalActors[i]->name).compare(actor_name) == 0){
-            cout << "goes into found actor" << endl;
-            cout << "loaded Actor's name: " << totalActors[i]->name << endl;
+            //cout << "goes into found actor" << endl;
+            //cout << "loaded Actor's name: " << totalActors[i]->name << endl;
 
             actorIn = true;
 
@@ -129,12 +137,12 @@ bool ActorGraph::loadFromFile(const char* in_filename, bool use_weighted_edges) 
           }
         }
 
-        cout << "actorIn: " << actorIn << endl;
+        //cout << "actorIn: " << actorIn << endl;
         // if actor doesn't exist
         if(!actorIn){
 
                           
-          cout << "actor not found in load: " << actor_name << endl;
+          //cout << "actor not found in load: " << actor_name << endl;
 
           // create new ActorNode object to insert
           ActorNode * aNode = new ActorNode(actor_name);
@@ -176,8 +184,8 @@ bool ActorGraph::loadFromFile(const char* in_filename, bool use_weighted_edges) 
           }
         }    
 
-      cout << "totalMovies size: " << totalMovies.size() << endl;
-      cout << "totalActors size: " << totalActors.size() << endl;    
+      //cout << "totalMovies size: " << totalMovies.size() << endl;
+      //cout << "totalActors size: " << totalActors.size() << endl;    
     }
 
     if (!infile.eof()) {
@@ -189,13 +197,74 @@ bool ActorGraph::loadFromFile(const char* in_filename, bool use_weighted_edges) 
     return true;
 }
 
+vector<std::pair<string,string>> ActorGraph::loadOnePair(const char* in_filename) {
+
+    // Initialize the file stream
+    ifstream infile(in_filename);
+
+    bool have_header = false;
+    vector<std::pair<std::string,std::string>> allPairs;
+
+    while (infile) {
+  
+      string s;
+          
+      // get the next line
+      if (!getline( infile, s )) {
+        break;
+      }
+
+      if (!have_header) {
+        // skip the header
+        have_header = true;
+        continue;
+      }
+
+      istringstream ss( s );
+      vector <string> record;
+
+      while (ss) {
+        string next;
+      
+        // get the next string before hitting a tab character and put it in 'next'
+        if (!getline( ss, next, '\t' )) {
+          //cout << "breaks at tab" << endl;
+          break;
+        }
+
+        record.push_back( next );
+      }
+    
+      if (record.size() != 2) {
+        // we should have exactly 2 columns
+        //cout << "doesn't have 2 columns" << endl;
+        continue;
+      }
+
+      string actor1(record[0]);
+      string actor2(record[1]);
+
+      allPairs.push_back(std::make_pair(actor1, actor2));
+
+    }
+
+    if (!infile.eof()) {
+        cerr << "Failed to read " << in_filename << "!\n";
+        return allPairs;
+    }
+    infile.close();
+
+    return allPairs;
+
+}
+
+
 std::string ActorGraph::actorPath(std::string a1, std::string a2){
   std::queue<string> pathway;
-  //stack<string> finalString;
-  std::queue<ActorNode*> actorsInPath;
+  std::stack<ActorNode*> actorsInPath;
+  std::stack<ActorNode*> actorsInPath2;
   vector<ActorNode*> adjActors;
   vector<ActorNode*> adjActors2;
-  //vector<MovieNode*> adjMovies;
   ActorNode* actorNode1;
   ActorNode* actorNode2;
   ActorNode* currentActor;
@@ -204,7 +273,7 @@ std::string ActorGraph::actorPath(std::string a1, std::string a2){
   bool a2Found = false;
 
   for(int i=0; i<totalActors.size(); i++){
-    cout << totalActors.size() << endl;
+    //cout << totalActors.size() << endl;
     if(totalActors[i]->name.compare(a1) == 0){
       actorNode1 = totalActors[i];
     }
@@ -216,54 +285,57 @@ std::string ActorGraph::actorPath(std::string a1, std::string a2){
     return a1;
   }
 
-  //pathway.push(a1);
-  //actorsInPath.push_back(actorNode1);
+  actorNode1->visited = true;
   adjActors.push_back(actorNode1);
-  //currentActor = actorNode1;
 
+  /*
   for(int i=0; i<totalActors.size(); i++){
     cout << "All Actors Names:" << totalActors[i]->name << endl;
   }
+  
   cout << totalActors.size() << endl;
+  */
 
   while (!adjActors.empty()) {
 
     for(int i=0; i< (adjActors.size()); i++) {
       currentActor = adjActors[i];
-      cout << "currentActor->name: " << currentActor->name << endl;
-      actorsInPath.push(currentActor);
+      //cout << "currentActor->name: " << currentActor->name << endl;
+      //actorsInPath2.push(currentActor);
       for(int j=0; j<(currentActor->listOfMovies.size()); j++) {
         if (a2Found == true) {
           break;
         }
-        cout << "currentActor->listOfMovies.size(): " << currentActor->listOfMovies.size() << endl;
+        //cout << "currentActor->listOfMovies.size(): " << currentActor->listOfMovies.size() << endl;
         currentMovie = currentActor->listOfMovies[j];
-        cout << "currentMovie->name: " << currentMovie->name << endl;
+        //cout << "currentMovie->name: " << currentMovie->name << endl;
         for(int k=0; k < currentMovie->listOfActors.size(); k++) {
-          currentMovie->listOfActors[k]->prevActor = currentActor;
+          //currentMovie->listOfActors[k]->prevActor = currentActor;
           if (currentMovie->listOfActors[k]->visited == false) {
-            cout << "visiting unvisited actor: " << currentMovie->listOfActors[k]->name << endl;
-            
+            //cout << "visiting unvisited actor: " << currentMovie->listOfActors[k]->name << endl;
+            currentMovie->listOfActors[k]->prevActor = currentActor;
+            currentMovie->listOfActors[k]->dist = currentActor->dist + 1;
             currentMovie->listOfActors[k]->visited = true;
             if (currentMovie->listOfActors[k]->name.compare(a2) == 0) {
-              cout << "found a2" << endl;
+              //cout << "found a2" << endl;
               currentActor->movieConnected = currentMovie;
               currentMovie->listOfActors[k]->prevActor = currentActor;
-              actorsInPath.push(currentMovie->listOfActors[k]);
+              //actorsInPath2.push(currentMovie->listOfActors[k]);
               a2Found = true;
+              actorNode2 = currentMovie->listOfActors[k];
               break;
             }
             else {
-            //currentMovie->listOfActors[k]->movieConnected = currentMovie;
               adjActors2.push_back(currentMovie->listOfActors[k]);
             }
           }
         }
       }
+      //actorsInPath.pop();
       if (a2Found == true) {
         break;
       }
-      actorsInPath.pop();
+      //actorsInPath2.pop();
     }
 
     if (a2Found == true) {
@@ -275,16 +347,42 @@ std::string ActorGraph::actorPath(std::string a1, std::string a2){
     for(int i=0; i<adjActors2.size();i++) {
       adjActors.push_back(adjActors2[i]);
     }
+    adjActors2.clear();
+    std::sort(adjActors.begin(), adjActors.end());
         
   }
 
   if (adjActors.empty()) {
-    cout << "no connection found. SORRY!!" << endl;
+    //cout << "no connection found. SORRY!!" << endl;
+    return "9999";
   }
 
+  currentActor = actorNode2;
+  while (currentActor) {
+    cout << "currentActor pushing: " << currentActor->name << endl;
+    actorsInPath.push(currentActor);
+    if (currentActor->prevActor) {
+      currentActor = currentActor->prevActor;
+    }
+    else {
+      break;
+    }
+  }
+
+  /*
+  while (!actorsInPath2.empty()) {
+    cout << "actorsInPath2 size: " << actorsInPath2.size() << endl;
+    currentActor = actorsInPath2.top();
+    actorsInPath.push(currentActor);
+    actorsInPath2.pop();
+  }
+*/
+
+
   while (!actorsInPath.empty()) {
-    cout << "actorsInPath size: " << actorsInPath.size() << endl;
-    currentActor = actorsInPath.front();
+    //cout << "actorsInPath size: " << actorsInPath.size() << endl;
+    cout << "looping to write" << endl;
+    currentActor = actorsInPath.top();
     pathway.push("(");
     pathway.push(currentActor->name);
     pathway.push(")");

@@ -10,13 +10,16 @@
 #ifndef ACTORGRAPH_H
 #define ACTORGRAPH_H
 #include <cstdlib>
-
+#include <string>
 #include <iostream>
-
-// Maybe include some data structures here
-
+#include "ActorNode.h"
+#include "MovieNode.h"
 using namespace std;
 
+class MovieNode;
+class ActorNode;
+
+/*
 class MovieNode;
 
 class ActorNode {
@@ -60,6 +63,8 @@ class MovieNode {
     //~MovieNode();
 };
 
+*/
+
 class ActorGraph {
 protected:
   
@@ -85,7 +90,10 @@ public:
 
     std::string actorPath(std::string a1, std::string a2);
 
-
+    /**
+     * Load which pairs to find paths for from an input file
+     */
+    vector<std::pair<string, string>> loadOnePair(const char* in_filename);
   
 };
 

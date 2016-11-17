@@ -18,6 +18,9 @@ int main(int argc, char ** argv){
 
   ActorGraph currentGraph;
   bool use_weighted_edges = false;
+  vector<std::pair<string,string>> pairsToFind;
+  std::string a1, a2;
+  std::string pathway;
 
   if(argc != 5){
     cout << "Error Occurred" << endl;
@@ -41,9 +44,37 @@ int main(int argc, char ** argv){
 
   currentGraph.loadFromFile(argv[1], use_weighted_edges);
 
-  cout << currentGraph.actorPath("WILSON, LUKE (I)", "WILSON, OWEN (I)") << endl;
+  //cout << currentGraph.actorPath("WILSON, LUKE (I)", "WILSON, OWEN (I)") << endl;
 
 
+  pairsToFind = currentGraph.loadOnePair(argv[3]);
+
+  ofstream pathfile;
+  pathfile.open(argv[4]);
+
+  pathfile << "(actor)--[movie#@year]-->(actor)--..." << endl;
+
+  for(int i=0; i<pairsToFind.size(); i++) {
+    std::pair<string,string> currentPair = pairsToFind[i];
+
+    a1 = currentPair.first;
+    a2 = currentPair.second;
+
+    cout << "a1: " << a1 << endl;
+    cout << "a2: " << a2 << endl;
+
+    pathway = currentGraph.actorPath(a1, a2);
+    cout << "pathway: " << pathway << endl;
+
+    pathfile << pathway << endl;
+
+    //cout << currentGraph.actorPath(a1, a2) << endl;
+
+
+  }
+
+  
+  
 /*
   std::filebuf fb2;
   fb2.open(argv[3], std::ios::binary);
