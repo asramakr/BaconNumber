@@ -15,6 +15,7 @@ class ActorNode {
     vector<MovieNode*> listOfMovies; // list of movies actor has been in
     bool visited = false; // check if actor node has been traversed
     MovieNode* movieConnected = NULL;
+    MovieNode* prevMovie = NULL;
     ActorNode* prevActor = NULL;
     int dist = 0;
 

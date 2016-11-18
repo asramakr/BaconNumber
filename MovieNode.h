@@ -17,6 +17,7 @@ class MovieNode {
     std::string name; // name of movie
     vector<ActorNode*> listOfActors; // list of actors in this movie
     unsigned int yearReleased = 0; // year when movie was released
+    bool visited = false;
   
 
     // Constructor

@@ -44,9 +44,9 @@ int main(int argc, char ** argv){
 
   currentGraph.loadFromFile(argv[1], use_weighted_edges);
 
-  //cout << currentGraph.actorPath("WILSON, LUKE (I)", "WILSON, OWEN (I)") << endl;
+  cout << currentGraph.actorPath("BACON, KEVIN (I)", "GIAMATTI, PAUL") << endl;
 
-
+  /*
   pairsToFind = currentGraph.loadOnePair(argv[3]);
 
   ofstream pathfile;
@@ -72,6 +72,8 @@ int main(int argc, char ** argv){
 
 
   }
+
+  */
 
   
   
