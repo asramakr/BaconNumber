@@ -44,15 +44,17 @@ int main(int argc, char ** argv){
 
   currentGraph.loadFromFile(argv[1], use_weighted_edges);
 
-  cout << currentGraph.actorPath("BACON, KEVIN (I)", "GIAMATTI, PAUL") << endl;
+  //cout << currentGraph.actorPath("BACON, KEVIN (I)", "WILLIS, BRUCE") << endl;
 
-  /*
+  
   pairsToFind = currentGraph.loadOnePair(argv[3]);
 
   ofstream pathfile;
   pathfile.open(argv[4]);
 
   pathfile << "(actor)--[movie#@year]-->(actor)--..." << endl;
+
+  cout << "pairsToFind size: " << pairsToFind.size() << endl;
 
   for(int i=0; i<pairsToFind.size(); i++) {
     std::pair<string,string> currentPair = pairsToFind[i];
@@ -73,7 +75,7 @@ int main(int argc, char ** argv){
 
   }
 
-  */
+  
 
   
   

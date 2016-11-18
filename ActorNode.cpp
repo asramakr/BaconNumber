@@ -14,3 +14,10 @@ using namespace std;
 void ActorNode::addMovie(MovieNode * movieToAdd) {
   listOfMovies.push_back(movieToAdd);
 }
+
+void ActorNode::reset() {
+  visited = false;
+  movieConnected = NULL;
+  prevMovie = NULL;
+  prevActor = NULL;
+}

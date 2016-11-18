@@ -24,7 +24,9 @@ class ActorNode {
     ActorNode(std::string actorName) : name(actorName){}
 
     // Method that adds to list of movies actor has been in
-    void addMovie(MovieNode* movieToAdd);  
+    void addMovie(MovieNode* movieToAdd); 
+
+    void reset(); 
 
     //Destructor
     //~ActorNode();
