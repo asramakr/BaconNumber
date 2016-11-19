@@ -23,6 +23,7 @@ class MovieNode {
     // Constructor
     MovieNode(std::string movieName, unsigned int year) : name(movieName),
         yearReleased(year) {}
+    //~MovieNode();
 
     //Method to add actor to list of all total actors
     void addActor(ActorNode* actorToAdd);

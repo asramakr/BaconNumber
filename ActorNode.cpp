@@ -21,3 +21,7 @@ void ActorNode::reset() {
   prevMovie = NULL;
   prevActor = NULL;
 }
+
+/*ActorNode::~ActorNode(){
+  delete this;
+} */

@@ -26,6 +26,21 @@ using namespace std;
 
 ActorGraph::ActorGraph(void) {}
 
+/*ActorGraph::~ActorGraph(){
+  for(int i=0; i<totalActors.size(); i++){
+    if(totalActors[i]){
+      delete totalActors[i];
+    }
+  }
+
+  for(int i=0; i<totalMovies.size(); i++){
+    if(totalMovies[i]){
+      delete totalMovies[i];
+    }
+  }
+
+} */
+
 bool ActorGraph::loadFromFile(const char* in_filename, bool use_weighted_edges) {
     // Initialize the file stream
     ifstream infile(in_filename);
@@ -345,10 +360,10 @@ std::string ActorGraph::actorPath(std::string a1, std::string a2){
 
   currentActor = actorNode2;
   while (currentActor) {
-    cout << "currentActor pushing: " << currentActor->name << endl;
+    //cout << "currentActor pushing: " << currentActor->name << endl;
     actorsInPath.push(currentActor);
     if (currentActor->prevActor) {
-      cout << "currentActor's prevActor: " << currentActor->prevActor->name << endl;
+      //cout << "currentActor's prevActor: " << currentActor->prevActor->name << endl;
       currentActor->prevActor->movieConnected = currentActor->prevMovie;
       currentActor = currentActor->prevActor;
     }
@@ -386,7 +401,15 @@ std::string ActorGraph::actorPath(std::string a1, std::string a2){
     pathway.pop();
   }
 
+
   // go back through same path and reset each node's vars
+  for(int i=0; i<totalActors.size(); i++) {
+    currentActor = totalActors[i];
+    if (currentActor->visited == true) {
+      currentActor->reset();
+    }
+  }
+/*
   actorNode1->visited = true;
   adjActors.push_back(actorNode1);
   a2Found = false;
@@ -448,6 +471,8 @@ std::string ActorGraph::actorPath(std::string a1, std::string a2){
 
   actorNode1->visited = false;
   actorNode2->reset();
+
+  */
 
   if ((a2Found == false)) {
     //cout << "no connection found. SORRY!!" << endl;

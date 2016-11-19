@@ -54,7 +54,7 @@ int main(int argc, char ** argv){
 
   pathfile << "(actor)--[movie#@year]-->(actor)--..." << endl;
 
-  cout << "pairsToFind size: " << pairsToFind.size() << endl;
+  //cout << "pairsToFind size: " << pairsToFind.size() << endl;
 
   for(int i=0; i<pairsToFind.size(); i++) {
     std::pair<string,string> currentPair = pairsToFind[i];
@@ -62,11 +62,11 @@ int main(int argc, char ** argv){
     a1 = currentPair.first;
     a2 = currentPair.second;
 
-    cout << "a1: " << a1 << endl;
-    cout << "a2: " << a2 << endl;
+    //cout << "a1: " << a1 << endl;
+    //cout << "a2: " << a2 << endl;
 
     pathway = currentGraph.actorPath(a1, a2);
-    cout << "pathway: " << pathway << endl;
+    //cout << "pathway: " << pathway << endl;
 
     pathfile << pathway << endl;
 

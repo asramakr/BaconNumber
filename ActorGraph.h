@@ -74,6 +74,7 @@ protected:
 
 public:
     ActorGraph(void);
+    //~ActorGraph();
 
     // Maybe add some more methods here
 
