@@ -10,9 +10,23 @@
 #include "MovieNode.h"
 
 using namespace std;
+/*
+class Comparison
+{
+public:
+  Comparison();
+  bool operator() (const MovieNode& lhs, const MovieNode&rhs) const
+  {
+    return (lhs.weight < rhs.weight);
+  }
+};
+*/
+
 
 void ActorNode::addMovie(MovieNode * movieToAdd) {
   listOfMovies.push_back(movieToAdd);
+  //listOfMoviesPQ.push(movieToAdd);
+  //listOfMoviesPQ2.push(movieToAdd);
 }
 
 void ActorNode::reset() {

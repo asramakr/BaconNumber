@@ -1,18 +1,24 @@
 #ifndef ACTORNODE_H
 #define ACTORNODE_H
 #include <cstdlib>
+#include <queue>
+#include <vector>
 #include <string>
 #include <iostream>
 #include "MovieNode.h"
 #include "ActorGraph.h"
 using namespace std;
 
+class MovieNodePtrComp;
+
 class ActorNode {
 
   public:
 
     std::string name; // name of actor
-    vector<MovieNode*> listOfMovies; // list of movies actor has been in
+    std::vector<MovieNode*> listOfMovies; //list of movies actor is in
+    //std::priority_queue<MovieNode*, std::vector<MovieNode*>, MovieNodePtrComp> listOfMoviesPQ;
+    //std::priority_queue<MovieNode*, std::vector<MovieNode*>, MovieNodePtrComp> listOfMoviesPQ2;  
     bool visited = false; // check if actor node has been traversed
     MovieNode* movieConnected = NULL;
     MovieNode* prevMovie = NULL;

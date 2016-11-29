@@ -18,11 +18,17 @@ class MovieNode {
     vector<ActorNode*> listOfActors; // list of actors in this movie
     unsigned int yearReleased = 0; // year when movie was released
     bool visited = false;
+    int weight = 0;
+    ActorNode* actorConnected = NULL;
+    ActorNode* prevActor = NULL;
+    MovieNode* prevMovie = NULL;
   
 
     // Constructor
     MovieNode(std::string movieName, unsigned int year) : name(movieName),
-        yearReleased(year) {}
+        yearReleased(year) {
+          weight = 1 + (2015 - yearReleased);
+        }
     //~MovieNode();
 
     //Method to add actor to list of all total actors

@@ -16,54 +16,15 @@
 #include "MovieNode.h"
 using namespace std;
 
-class MovieNode;
-class ActorNode;
-
-/*
-class MovieNode;
-
-class ActorNode {
-
-  public:
-
-    std::string name; // name of actor
-    vector<MovieNode*> listOfMovies; // list of movies actor has been in
-    bool visited = false; // check if actor node has been traversed
-    MovieNode* movieConnected;
-    ActorNode* prevActor;
-
-
-    //Constructor
-    ActorNode(std::string actorName) : name(actorName){}
-
-    // Method that adds to list of movies actor has been in
-    void addMovie(MovieNode* movieToAdd);  
-
-    //Destructor
-    //~ActorNode();
+class MovieNodePtrComp
+{
+public:
+  MovieNodePtrComp(void) {}
+  bool operator() (const MovieNode* lhs, const MovieNode* rhs) const
+  {
+    return ((*lhs).weight > (*rhs).weight);
+  }
 };
-
-class MovieNode {
-
-  public:
-
-    std::string name; // name of movie
-    vector<ActorNode*> listOfActors; // list of actors in this movie
-    unsigned int yearReleased = 0; // year when movie was released
-  
-
-    // Constructor
-    MovieNode(std::string movieName, unsigned int year) : name(movieName),
-        yearReleased(year) {}
-
-    //Method to add actor to list of all total actors
-    void addActor(ActorNode* actorToAdd);
-
-    //Destructor
-    //~MovieNode();
-};
-
-*/
 
 class ActorGraph {
 protected:
@@ -89,7 +50,7 @@ public:
      */
     bool loadFromFile(const char* in_filename, bool use_weighted_edges);
 
-    std::string actorPath(std::string a1, std::string a2);
+    std::string actorPath(std::string a1, std::string a2, bool use_weighted_edges);
 
     /**
      * Load which pairs to find paths for from an input file

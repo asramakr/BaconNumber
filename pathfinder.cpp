@@ -65,7 +65,7 @@ int main(int argc, char ** argv){
     //cout << "a1: " << a1 << endl;
     //cout << "a2: " << a2 << endl;
 
-    pathway = currentGraph.actorPath(a1, a2);
+    pathway = currentGraph.actorPath(a1, a2, use_weighted_edges);
     //cout << "pathway: " << pathway << endl;
 
     pathfile << pathway << endl;
