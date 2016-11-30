@@ -272,10 +272,10 @@ std::string ActorGraph::actorPath(std::string a1, std::string a2, bool use_weigh
   std::queue<string> pathway;
   std::stack<ActorNode*> actorsInPath;
   std::stack<ActorNode*> actorsInPath2;
-  vector<ActorNode*> adjActors;
-  vector<ActorNode*> adjActors2;
+  //vector<ActorNode*> adjActors;
+  //vector<ActorNode*> adjActors2;
   vector<MovieNode*> adjMovies;
-//  vector<MovieNode*> adjMovies2;
+  vector<MovieNode*> adjMovies2;
   ActorNode* actorNode1;
   ActorNode* actorNode2;
   ActorNode* currentActor;
@@ -300,11 +300,13 @@ std::string ActorGraph::actorPath(std::string a1, std::string a2, bool use_weigh
   }
 
   actorNode1->visited = true;
-  adjActors.push_back(actorNode1);
+  //adjActors.push_back(actorNode1);
   currentActor = actorNode1;
+  
   for (int i =0; i<actorNode1->listOfMovies.size();i++) {
-    actorNode1->listOfMovies[i]->actorConnected = actorNode1;
-  }
+    actorNode1->listOfMovies[i]->prevActor = actorNode1;
+    adjMovies.push_back(actorNode1->listOfMovies[i]);
+  } 
 
   std::priority_queue< MovieNode*, std::vector<MovieNode*>, MovieNodePtrComp > adjMoviesPQ(actorNode1->listOfMovies.begin(), actorNode1->listOfMovies.end());
   std::priority_queue< MovieNode*, std::vector<MovieNode*>, MovieNodePtrComp > adjMoviesPQ2;
@@ -318,11 +320,15 @@ std::string ActorGraph::actorPath(std::string a1, std::string a2, bool use_weigh
         currentMovie = adjMoviesPQ.top();
         currentActor = currentMovie->actorConnected;
         adjMoviesPQ.pop();
+        /*
         if (currentMovie->visited == true) {
           continue;
         }
+        */
+
         currentMovie->visited = true;
         currentActor->movieConnected = currentMovie;
+
         for (int j=0; j < currentMovie->listOfActors.size(); j++) {
           //if (a2Found == true) {
           //  break;
@@ -344,7 +350,7 @@ std::string ActorGraph::actorPath(std::string a1, std::string a2, bool use_weigh
             }
             else {
               cout << "goes into weighted else for a2 not found" << endl;
-              for (int x=0; x < currentMovie->listOfActors[j]->listOfMovies.size(); x++) {
+              for (int x=0; x < currentMovie->listOfActors[j ]->listOfMovies.size(); x++) {
                 if (currentMovie->listOfActors[j]->listOfMovies[x]->visited == false) {
                   currentMovie->listOfActors[j]->listOfMovies[x]->actorConnected = 
                       currentMovie->listOfActors[j];
@@ -433,27 +439,57 @@ std::string ActorGraph::actorPath(std::string a1, std::string a2, bool use_weigh
   } // close if
 
   else{
-    while (!adjActors.empty()) {
+    int counter = 0;
+    while (!adjMovies.empty()) {
+      counter++;
+      cout << counter << endl;
       //cout << "adjActors Size: " << adjActors.size() << endl;
-      for(int i=0; i< (adjActors.size()); i++) {
-        currentActor = adjActors[i];
-        //cout << "Current Actor: " << currentActor->name << endl;
-        for(int j=0; j<(currentActor->listOfMovies.size()); j++) {
-          if (a2Found == true) {
-            break;
+      for(int i=0; i<(adjMovies.size()); i++) {
+        currentMovie = adjMovies[i];
+        currentMovie->visited = true;
+        //currentMovie->prevActor = currentActor;
+        cout << "Labelling - Current Movie: " << currentMovie->name << endl;
+        for(int j=0; j<(currentMovie->listOfActors.size()); j++) {
+          currentActor = currentMovie->listOfActors[j];
+          //cout << "Labelling - Current Actor: " << currentActor->name << endl;
+          if (currentActor->visited == false) {
+            //cout << "Labelling - CurrentActor: " << currentActor->name << endl;
+            //currentActor->prevActor = currentMovie->prevActor;
+            //cout << "Labelling - PrevActor: " << currentActor->prevActor->name << endl;
+            currentMovie->actorConnected = currentActor;
+            if (currentMovie->prevMovie) {
+              currentMovie->prevMovie->actorConnected = currentMovie->prevActor;
+            }
+            currentMovie->prevActor->movieConnected = currentMovie;
+            //currentActor->prevMovie = currentMovie;
+            currentActor->visited = true;
+            if(currentActor->name.compare(a2) == 0){
+              a2Found = true;
+              //currentMovie->prevActor->movieConnected = currentMovie;
+              cout << "Found: " << currentMovie->name << endl;
+              cout << "Found:" << currentActor->prevMovie->name << endl;
+              currentActor->prevMovie = currentMovie;
+              actorNode2 = currentActor;
+              break;
+            }
+
+            else{
+              for(int k =0; k<currentActor->listOfMovies.size(); k++){
+                if (currentActor->listOfMovies[k]->visited == false) {
+                  currentActor->listOfMovies[k]->prevActor = currentActor;
+                  currentActor->listOfMovies[k]->prevMovie = currentMovie;
+                  adjMovies2.push_back(currentActor->listOfMovies[k]);
+                }
+              }
+            }
           }
-          currentMovie = currentActor->listOfMovies[j];
-          //currentActor->listOfMoviesPQ.pop();
-          currentActor->movieConnected = currentMovie;
-          std::sort(currentMovie->listOfActors.begin(), currentMovie->listOfActors.end());
-          //currentActor->movieConnected = currentMovie;
-          //cout << "CurrentMovie: " << currentMovie->name << endl;
+
+          /*
           for(int k=0; k < currentMovie->listOfActors.size(); k++) {
             if (currentMovie->listOfActors[k]->visited == false) {
-              //currentActor->movieConnected = currentMovie;
               currentMovie->listOfActors[k]->prevActor = currentActor;
               currentMovie->listOfActors[k]->prevMovie = currentMovie;
-              currentMovie->listOfActors[k]->dist = currentActor->dist + 1;
+              //currentMovie->listOfActors[k]->dist = currentActor->dist + 1;
               currentMovie->listOfActors[k]->visited = true;
               if (currentMovie->listOfActors[k]->name.compare(a2) == 0) {
                 currentActor->movieConnected = currentMovie;
@@ -464,53 +500,73 @@ std::string ActorGraph::actorPath(std::string a1, std::string a2, bool use_weigh
               }
               else {
                 adjActors2.push_back(currentMovie->listOfActors[k]);
-                //currentMovie->listOfActors[k]->movieConnected = currentMovie;
               }
             }
-          }
-        }
+          } */
+
+
+        } //end of 2nd for loop
+
         if (a2Found == true) {
           break;
         }
-      }
+      } //end of 1st for loop
 
       if (a2Found == true) {
         break;
       }
 
-      adjActors.clear();
+      adjMovies.clear();
     
-      for(int i=0; i<adjActors2.size();i++) {
-        adjActors.push_back(adjActors2[i]);
+      for(int i=0; i<adjMovies2.size();i++) {
+        adjMovies.push_back(adjMovies2[i]);
       }
-      adjActors2.clear();
+      adjMovies2.clear();
       //std::sort(adjActors.begin(), adjActors.end());
         
-    }
-  }
+    } //end of while loop
+
+  } //end of else statement
 
 
-  adjActors.clear();
+  adjMovies.clear();
 
   currentActor = actorNode2;
+  //actorsInPath.push(actorNode2);
+  currentMovie = actorNode2->prevMovie;
+
   while (currentMovie) {
-    cout << "currentActor pushing: " << currentActor->name << endl;
-    actorsInPath.push(currentActor);
-    //currentMovie = currentActor->movieConnected;
-    if (currentActor->prevActor) {
-      cout << "currentMovie's actorConnected: " << currentMovie->actorConnected->name << endl;
-      //cout << "currentActor->prevActor: " << currentActor->prevActor->name << endl;
+    cout << "currentActor pushing: " << currentMovie->actorConnected->name << endl;
+    actorsInPath.push(currentMovie->actorConnected);
+    //currentMovie = currentActor->prevMovie;
+    if (currentMovie->prevMovie) {
+      //if (currentMovie->name.compare(currentMovie->prevMovie->name) == 0) {
+      //  break;
+      //}
+
+      cout << "currentMovie->prevActor: " << currentMovie->prevActor->name << endl;
+      //currentMovie = currentActor->prevMovie;
+
+      //cout << "currentActor's prevMovie: " << currentMovie->name << endl;
       //cout << "currentActor->prevActor->movieConnected: " << currentActor->prevActor->movieConnected->name << endl;
       //cout << "currentActor->prevMovie: " << currentActor->prevMovie->name << endl;
       //currentActor->prevActor = currentMovie->actorConnected;
-      currentActor->prevActor->movieConnected = currentActor->prevMovie;
-      currentMovie = currentActor->movieConnected;
+      //if(currentMovie->prevMovie){
+      //  currentMovie->prevMovie->actorConnected = currentMovie->prevActor;
+      //}
       
+
+      currentMovie->actorConnected->prevActor->movieConnected = currentMovie;
+      //currentActor = currentActor->prevActor; 
+      currentMovie = currentMovie->prevMovie;
+
+      //currentActor = currentActor->prevActor;
     }
     else {
       break;
     }
   }
+  //actorsInPath.push(actorNode1);
 
   while (!actorsInPath.empty()) {
     //cout << "looping to write" << endl;
@@ -549,70 +605,12 @@ std::string ActorGraph::actorPath(std::string a1, std::string a2, bool use_weigh
       currentActor->reset();
     }
   }
-/*
-  actorNode1->visited = true;
-  adjActors.push_back(actorNode1);
-  a2Found = false;
-
-  while (!adjActors.empty()) {
-    cout << "looping to reset" << endl;
-    //cout << "adjActors Size: " << adjActors.size() << endl;
-    for(int i=0; i< (adjActors.size()); i++) {
-      currentActor = adjActors[i];
-      //cout << "Current Actor: " << currentActor->name << endl;
-      for(int j=0; j<(currentActor->listOfMovies.size()); j++) {
-        if (a2Found == true) {
-          break;
-        }
-        currentMovie = currentActor->listOfMovies[j];
-        currentActor->movieConnected = NULL;
-        std::sort(currentMovie->listOfActors.begin(), currentMovie->listOfActors.end());
-        //currentActor->movieConnected = currentMovie;
-        //cout << "CurrentMovie: " << currentMovie->name << endl;
-        for(int k=0; k < currentMovie->listOfActors.size(); k++) {
-          if (currentMovie->listOfActors[k]->visited == true) {
-            //currentActor->movieConnected = currentMovie;
-            currentMovie->listOfActors[k]->prevActor = NULL;
-            currentMovie->listOfActors[k]->prevMovie = NULL;
-            currentMovie->listOfActors[k]->dist = currentActor->dist + 1;
-            currentMovie->listOfActors[k]->visited = false;
-            if (currentMovie->listOfActors[k]->name.compare(a2) == 0) {
-              currentActor->movieConnected = NULL;
-              currentMovie->listOfActors[k]->prevActor = NULL;
-              a2Found = true;
-              actorNode2 = currentMovie->listOfActors[k];
-              break;
-            }
-            else {
-              adjActors2.push_back(currentMovie->listOfActors[k]);
-              //currentMovie->listOfActors[k]->movieConnected = currentMovie;
-            }
-          }
-        }
-      }
-      if (a2Found == true) {
-        break;
-      }
+  for(int i=0; i<totalMovies.size(); i++) {
+    currentMovie = totalMovies[i];
+    if (currentMovie->visited == true) {
+      currentMovie->reset();
     }
-
-    if (a2Found == true) {
-      break;
-    }
-
-    adjActors.clear();
-    
-    for(int i=0; i<adjActors2.size();i++) {
-      adjActors.push_back(adjActors2[i]);
-    }
-    adjActors2.clear();
-    //std::sort(adjActors.begin(), adjActors.end());
-        
   }
-
-  actorNode1->visited = false;
-  actorNode2->reset();
-
-  */
 
   if ((a2Found == false)) {
     //cout << "no connection found. SORRY!!" << endl;

@@ -15,6 +15,13 @@ void MovieNode::addActor(ActorNode* actorToAdd) {
   listOfActors.push_back(actorToAdd);
 }
 
+void MovieNode::reset(){
+  bool visited = false;
+  ActorNode* actorConnected = NULL;
+  ActorNode* prevActor = NULL;
+  MovieNode* prevMovie = NULL;
+}
+
 
 /*MovieNode::~MovieNode(){
   delete this;

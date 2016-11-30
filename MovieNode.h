@@ -34,6 +34,8 @@ class MovieNode {
     //Method to add actor to list of all total actors
     void addActor(ActorNode* actorToAdd);
 
+    void reset();
+
     //Destructor
     //~MovieNode();
 };
