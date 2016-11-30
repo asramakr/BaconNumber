@@ -457,10 +457,10 @@ std::string ActorGraph::actorPath(std::string a1, std::string a2, bool use_weigh
             //currentActor->prevActor = currentMovie->prevActor;
             //cout << "Labelling - PrevActor: " << currentActor->prevActor->name << endl;
             currentMovie->actorConnected = currentActor;
+            currentMovie->prevActor->movieConnected = currentMovie;
             if (currentMovie->prevMovie) {
               currentMovie->prevMovie->actorConnected = currentMovie->prevActor;
             }
-            currentMovie->prevActor->movieConnected = currentMovie;
             //currentActor->prevMovie = currentMovie;
             currentActor->visited = true;
             if(currentActor->name.compare(a2) == 0){
@@ -468,7 +468,7 @@ std::string ActorGraph::actorPath(std::string a1, std::string a2, bool use_weigh
               //currentMovie->prevActor->movieConnected = currentMovie;
               cout << "Found: " << currentMovie->name << endl;
               cout << "Found:" << currentActor->prevMovie->name << endl;
-              currentActor->prevMovie = currentMovie;
+              currentMovie->actorConnected = currentActor;
               actorNode2 = currentActor;
               break;
             }
@@ -532,12 +532,12 @@ std::string ActorGraph::actorPath(std::string a1, std::string a2, bool use_weigh
   adjMovies.clear();
 
   currentActor = actorNode2;
-  //actorsInPath.push(actorNode2);
+  actorsInPath.push(currentActor);
   currentMovie = actorNode2->prevMovie;
 
   while (currentMovie) {
     cout << "currentActor pushing: " << currentMovie->actorConnected->name << endl;
-    actorsInPath.push(currentMovie->actorConnected);
+    actorsInPath.push(currentMovie->prevActor);
     //currentMovie = currentActor->prevMovie;
     if (currentMovie->prevMovie) {
       //if (currentMovie->name.compare(currentMovie->prevMovie->name) == 0) {
@@ -556,7 +556,7 @@ std::string ActorGraph::actorPath(std::string a1, std::string a2, bool use_weigh
       //}
       
 
-      currentMovie->actorConnected->prevActor->movieConnected = currentMovie;
+      currentMovie->prevMovie->actorConnected = currentMovie->prevActor;
       //currentActor = currentActor->prevActor; 
       currentMovie = currentMovie->prevMovie;
 
