@@ -459,7 +459,6 @@ std::string ActorGraph::actorPath(std::string a1, std::string a2, bool use_weigh
             }
 
             else{
-              cout << "going into else" << endl;
               for(int k =0; k<currentActor->listOfMovies.size(); k++){
                 if (currentActor->listOfMovies[k]->visited == false) {
                   currentActor->listOfMovies[k]->visited = true;
