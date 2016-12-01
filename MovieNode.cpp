@@ -33,6 +33,7 @@ void MovieNode::reset(){
   actorConnected = NULL;
   prevActor = NULL;
   prevMovie = NULL;
+  weight = 1 + (2015 - yearReleased);
 }
 
 
