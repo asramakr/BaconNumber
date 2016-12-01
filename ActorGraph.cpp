@@ -311,7 +311,7 @@ std::string ActorGraph::actorPath(std::string a1, std::string a2, bool use_weigh
   std::priority_queue< MovieNode*, std::vector<MovieNode*>, MovieNodePtrComp > adjMoviesPQ(actorNode1->listOfMovies.begin(), actorNode1->listOfMovies.end());
   std::priority_queue< MovieNode*, std::vector<MovieNode*>, MovieNodePtrComp > adjMoviesPQ2;
   
-  
+  int counter = 0;  
 
   if(use_weighted_edges){
     while (!adjMoviesPQ.empty()) {
@@ -439,7 +439,6 @@ std::string ActorGraph::actorPath(std::string a1, std::string a2, bool use_weigh
   } // close if
 
   else{
-    int counter = 0;
     while (!adjMovies.empty()) {
       counter++;
       cout << counter << endl;
@@ -460,12 +459,15 @@ std::string ActorGraph::actorPath(std::string a1, std::string a2, bool use_weigh
             }
 
             else{
+              cout << "going into else" << endl;
               for(int k =0; k<currentActor->listOfMovies.size(); k++){
                 if (currentActor->listOfMovies[k]->visited == false) {
+                  currentActor->listOfMovies[k]->visited = true;
                   currentActor->listOfMovies[k]->prevActor = currentActor;
                   currentActor->listOfMovies[k]->prevMovie = currentMovie;
-                  adjMovies2.push_back(currentActor->listOfMovies[k]);
                 }
+                adjMovies2.push_back(currentActor->listOfMovies[k]);
+                
               }
             }
           }
@@ -518,6 +520,8 @@ std::string ActorGraph::actorPath(std::string a1, std::string a2, bool use_weigh
 
   currentActor = actorNode2;
   cout << "actorNode2 pushing: " << currentActor->name << endl;
+  cout << "Degrees Between: " << counter << endl;
+  cout << "actorNode1 pushing: " << actorNode1->name << endl;
   actorsInPath.push(currentActor);
   currentMovie = actorNode2->prevMovie;
 

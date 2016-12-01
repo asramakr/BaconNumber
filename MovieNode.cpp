@@ -16,10 +16,10 @@ void MovieNode::addActor(ActorNode* actorToAdd) {
 }
 
 void MovieNode::reset(){
-  bool visited = false;
-  ActorNode* actorConnected = NULL;
-  ActorNode* prevActor = NULL;
-  MovieNode* prevMovie = NULL;
+  visited = false;
+  actorConnected = NULL;
+  prevActor = NULL;
+  prevMovie = NULL;
 }
 
 
