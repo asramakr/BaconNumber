@@ -1,3 +1,11 @@
+/**
+ * File: ActorNode.h
+ * Author(s): Alexis Atianzar & Arun Ramakrishnan
+ * Date: 11/30/16
+ * Description: This file contains the method signatures and variables for the
+ * ActorNode class.
+ *
+ */
 #ifndef ACTORNODE_H
 #define ACTORNODE_H
 #include <cstdlib>
@@ -20,9 +28,9 @@ class ActorNode {
     //std::priority_queue<MovieNode*, std::vector<MovieNode*>, MovieNodePtrComp> listOfMoviesPQ;
     //std::priority_queue<MovieNode*, std::vector<MovieNode*>, MovieNodePtrComp> listOfMoviesPQ2;  
     bool visited = false; // check if actor node has been traversed
-    MovieNode* movieConnected = NULL;
-    MovieNode* prevMovie = NULL;
-    ActorNode* prevActor = NULL;
+    MovieNode* movieConnected = NULL; // movie edge coming after
+    MovieNode* prevMovie = NULL; // movie edge coming before
+    ActorNode* prevActor = NULL; // actor node before in path
     int dist = 0;
 
 
@@ -33,6 +41,7 @@ class ActorNode {
     // Method that adds to list of movies actor has been in
     void addMovie(MovieNode* movieToAdd); 
 
+    // Resets the member variables
     void reset(); 
 
     //Destructor

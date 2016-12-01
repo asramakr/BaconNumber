@@ -1,7 +1,7 @@
 /*
  * ActorGraph.h
- * Author: <YOUR NAME HERE>
- * Date:   <DATE HERE>
+ * Author: Alexis Atianzar & Arun Ramakrishnan
+ * Date:   11/30/16
  *
  * This file is meant to exist as a container for starter code that you can use to read the input file format
  * defined in movie_casts.tsv. Feel free to modify any/all aspects as you wish.
@@ -16,10 +16,17 @@
 #include "MovieNode.h"
 using namespace std;
 
+/**
+ * Comparator class for MovieNode's
+ */
 class MovieNodePtrComp
 {
 public:
   MovieNodePtrComp(void) {}
+
+  /**
+   * Automatically sorts MovieNode's by weight
+   */
   bool operator() (const MovieNode* lhs, const MovieNode* rhs) const
   {
     return ((*lhs).weight > (*rhs).weight);
@@ -37,7 +44,6 @@ public:
     ActorGraph(void);
     //~ActorGraph();
 
-    // Maybe add some more methods here
 
     /** You can modify this method definition as you wish
      *

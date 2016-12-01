@@ -16,21 +16,19 @@ using namespace std;
 
 int main(int argc, char ** argv){
 
-  ActorGraph currentGraph;
-  bool use_weighted_edges = false;
-  vector<std::pair<string,string>> pairsToFind;
-  std::string a1, a2;
-  std::string pathway;
+  ActorGraph currentGraph; // graph containing dictionary of actors and movies
+  bool use_weighted_edges = false; // whether to find path using weights or not
+  vector<std::pair<string,string>> pairsToFind; // pairs of actors to find path
+  std::string a1, a2; // names of actor1 and actor2
+  std::string pathway; // total path from actor1 to actor2
 
+  // error if there aren't 5 arguments on the command line
   if(argc != 5){
-    cout << "Error Occurred" << endl;
+    cerr << "ERROR!! THERE SHOULD BE 4 ARGUMENTS!" << endl;
     return 1;
   }
-  //std::filebuf fb1;
-  //fb1.open(argv[1], std::ios::binary);
-  //std::istream castfile(&fb1);
 
-  char flag = *(argv[2]);
+  char flag = *(argv[2]); // get whether to use weighted edges or not
 
   // if 'u' inputed, graph with unweighted edges
   if (flag == 'u') {
@@ -42,25 +40,22 @@ int main(int argc, char ** argv){
     use_weighted_edges = true;
   }
 
-  currentGraph.loadFromFile(argv[1], use_weighted_edges);
+  currentGraph.loadFromFile(argv[1], use_weighted_edges); // load graph
 
-  //cout << currentGraph.actorPath("BACON, KEVIN (I)", "WILLIS, BRUCE") << endl;
+  pairsToFind = currentGraph.loadOnePair(argv[3]); // load all pairs to find
 
-  
-  pairsToFind = currentGraph.loadOnePair(argv[3]);
-
+  // open file to write paths to
   ofstream pathfile;
   pathfile.open(argv[4]);
 
   pathfile << "(actor)--[movie#@year]-->(actor)--..." << endl;
 
-  //cout << "pairsToFind size: " << pairsToFind.size() << endl;
-
+  //Go through each pair of actors and find and write the paths to pathfile
   for(int i=0; i<pairsToFind.size(); i++) {
     std::pair<string,string> currentPair = pairsToFind[i];
 
-    a1 = currentPair.first;
-    a2 = currentPair.second;
+    a1 = currentPair.first; // actorNode1
+    a2 = currentPair.second; //actorNode2
 
     //cout << "a1: " << a1 << endl;
     //cout << "a2: " << a2 << endl;
@@ -68,7 +63,7 @@ int main(int argc, char ** argv){
     pathway = currentGraph.actorPath(a1, a2, use_weighted_edges);
     //cout << "pathway: " << pathway << endl;
 
-    pathfile << pathway << endl;
+    pathfile << pathway << endl; // write path to outfile
 
     //cout << currentGraph.actorPath(a1, a2) << endl;
 
@@ -76,20 +71,4 @@ int main(int argc, char ** argv){
   }
 
   
-
-  
-  
-/*
-  std::filebuf fb2;
-  fb2.open(argv[3], std::ios::binary);
-  std::istream actorfile(&fb2);
-
-  //fb2.close();
-
-  std::filebuf fb3;
-  fb3.open(argv[4], std::ios::binary);
-
-  fb3.close();
-
-  */
 }
