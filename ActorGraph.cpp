@@ -359,14 +359,9 @@ std::string ActorGraph::actorPath(std::string a1, std::string a2,
             if(currentActor->name.compare(a2) == 0){
               currentActor->visited = false;
               a2Found = true;
-              cout << "Found: " << currentMovie->name << endl;
-              cout << "Total Weight Unchanged: " << totalWeight << endl;
-              cout << "Movie Weight" << currentMovie->weight << endl;
               actorNode2 = currentActor;
-              if(totalWeight == -1 || totalWeight > currentMovie->weight){
-                cout << "Total Weight Previous" << totalWeight << endl;
+              if(totalWeight == -1 || totalWeight >= currentMovie->weight){
                 totalWeight = currentMovie->weight;
-                cout << "Total Weight Current" << totalWeight << endl;
                 currentActor->prevMovie = currentMovie;
               }
             }
@@ -491,7 +486,6 @@ std::string ActorGraph::actorPath(std::string a1, std::string a2,
         
       */
 
-      cout << "PQ Empty: " << adjMoviesPQ.empty() << endl;
 
     }  // close while
 
@@ -522,7 +516,6 @@ std::string ActorGraph::actorPath(std::string a1, std::string a2,
             // break out of loop if actor2 is found
             if(currentActor->name.compare(a2) == 0){
               a2Found = true;
-              cout << "Found: " << currentMovie->name << endl;
               actorNode2 = currentActor;
               break;
             }
@@ -592,16 +585,11 @@ std::string ActorGraph::actorPath(std::string a1, std::string a2,
   // if actorNode2 is set, push all actors to the stack
   if (actorNode2) {
     currentActor = actorNode2;
-    cout << "actorNode2 pushing: " << currentActor->name << endl;
-    cout << "Degrees Between: " << counter << endl;
-    cout << "actorNode1 pushing: " << actorNode1->name << endl;
     actorsInPath.push(currentActor);
     currentMovie = actorNode2->prevMovie;
 
     // loop back through movies to push actors to stack in reverse order
     while (currentMovie) {
-      cout << "currentMovie: " << currentMovie->name << endl;
-      cout << "currentActor pushing: " << currentMovie->prevActor->name << endl;
       actorsInPath.push(currentMovie->prevActor);
       currentMovie->prevActor->movieConnected = currentMovie;
 
